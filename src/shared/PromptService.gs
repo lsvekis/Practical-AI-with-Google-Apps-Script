@@ -38,29 +38,37 @@ const PROMPTS = {
     ].join('\n');
   },
 
-  CLEANUP_ANALYSIS_V1: function(text) {
-    return [
-      'You are a document quality reviewer.',
-      '',
-      'Task:',
-      'Analyze the text below and identify: repetition, filler language, and long sentences.',
-      '',
-      'Output:',
-      'Return ONLY valid JSON using this schema:',
-      '{',
-      '  "repetition": string[],',
-      '  "filler": string[],',
-      '  "longSentences": number',
-      '}',
-      '',
-      'Rules:',
-      '- Do NOT rewrite the document',
-      '- Detect only based on provided text',
-      '',
-      'Text:',
-      text
-    ].join('\n');
-  },
+CLEANUP_ANALYSIS_V1: function(text) {
+  return [
+    'You are a document quality reviewer.',
+    '',
+    'Task:',
+    'Analyze the text and return findings about:',
+    '- repeated phrases',
+    '- filler phrases',
+    '- number of long sentences (over 25 words)',
+    '',
+    'Output format (STRICT):',
+    '- Return ONLY valid JSON.',
+    '- No markdown, no code fences, no commentary.',
+    '- All arrays must contain strings.',
+    '- longSentences must be an integer (0 or greater).',
+    '',
+    'JSON schema:',
+    '{',
+    '  "repetition": string[],',
+    '  "filler": string[],',
+    '  "longSentences": number',
+    '}',
+    '',
+    'Example output:',
+    '{"repetition":["in order to","at this point"],"filler":["very","really"],"longSentences":3}',
+    '',
+    'Text:',
+    text
+  ].join('\\n');
+},
+
 
   CLASSIFY_TEXT_V1: function(text) {
     return [
