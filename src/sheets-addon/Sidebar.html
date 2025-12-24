@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 12px; }
+    button { width: 100%; margin: 6px 0; padding: 10px; }
+    pre { white-space: pre-wrap; background: #f5f5f5; padding: 10px; border-radius: 8px; }
+    .small { font-size: 12px; color: #555; }
+  </style>
+</head>
+<body>
+  <h2>AI Assistant (Sheets)</h2>
+  <div class="small">
+    Tip: Click a cell first, then run an action.
+  </div>
+
+  <button onclick="run('sheetsExplainActiveFormula')">Explain Active Formula</button>
+  <button onclick="run('sheetsClassifyActiveCell')">Classify Active Cell (JSON)</button>
+  <button onclick="run('sheetsBatchClassifyColumnA')">Batch Classify Column A → B/C</button>
+
+  <h3>Output</h3>
+  <pre id="out">(results appear here)</pre>
+
+<script>
+  function run(fn) {
+    document.getElementById('out').textContent = "Running...";
+    google.script.run
+      .withSuccessHandler((res) => {
+        document.getElementById('out').textContent = String(res || "(empty)");
+      })
+      .withFailureHandler((err) => {
+        document.getElementById('out').textContent = "Error: " + (err && err.message ? err.message : err);
+      })[fn]();
+  }
+</script>
+</body>
+</html>
