@@ -88,7 +88,7 @@ function callAI_(prompt) {
   }
 
   const apiKey = aiGetApiKey_();
-  const model = PropertiesService.getScriptProperties().getProperty('AI_MODEL') || 'gemini-1.5-flash';
+  const model = PropertiesService.getScriptProperties().getProperty('AI_MODEL') || 'gemini-2.5-flash';
 
   const url =
     'https://generativelanguage.googleapis.com/v1beta/models/' +
