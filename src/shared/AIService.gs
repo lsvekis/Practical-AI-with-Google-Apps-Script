@@ -80,6 +80,64 @@ function callAI_(prompt) {
   // This placeholder throws to make it obvious it must be implemented.
   throw new Error('callAI_() not implemented. Configure your AI provider in src/shared/AIService.gs');
 }
+////OPtional
+function callAI_(prompt) {
+  const provider = (PropertiesService.getScriptProperties().getProperty('AI_PROVIDER') || 'gemini').toLowerCase();
+  if (provider !== 'gemini') {
+    throw new Error("AI_PROVIDER is not 'gemini'. Set AI_PROVIDER=gemini or use the OpenAI option below.");
+  }
+
+  const apiKey = aiGetApiKey_();
+  const model = PropertiesService.getScriptProperties().getProperty('AI_MODEL') || 'gemini-1.5-flash';
+
+  const url =
+    'https://generativelanguage.googleapis.com/v1beta/models/' +
+    encodeURIComponent(model) +
+    ':generateContent?key=' +
+    encodeURIComponent(apiKey);
+
+  const payload = {
+    contents: [
+      { role: 'user', parts: [{ text: String(prompt || '') }] }
+    ],
+    generationConfig: {
+      temperature: 0.2
+    }
+  };
+
+  const res = UrlFetchApp.fetch(url, {
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  });
+
+  const code = res.getResponseCode();
+  const body = res.getContentText();
+
+  if (code < 200 || code >= 300) {
+    throw new Error('Gemini API error ' + code + ': ' + body);
+  }
+
+  const json = JSON.parse(body);
+
+  // Typical response: candidates[0].content.parts[0].text
+  const text =
+    json &&
+    json.candidates &&
+    json.candidates[0] &&
+    json.candidates[0].content &&
+    json.candidates[0].content.parts &&
+    json.candidates[0].content.parts[0] &&
+    json.candidates[0].content.parts[0].text;
+
+  if (!text) {
+    throw new Error('Gemini response missing text: ' + body);
+  }
+
+  return String(text).trim();
+}
+
 
 /** Cache helpers */
 function aiCacheKey_(text) {
