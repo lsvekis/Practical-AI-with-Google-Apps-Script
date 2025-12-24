@@ -70,21 +70,25 @@ CLEANUP_ANALYSIS_V1: function(text) {
 },
 
 
-  CLASSIFY_TEXT_V1: function(text) {
-    return [
-      'Classify the text below into one category.',
-      '',
-      'Return ONLY valid JSON with this schema:',
-      '{ "category": "Billing | Technical | General | Other", "confidence": number }',
-      '',
-      'Rules:',
-      '- Confidence between 0 and 1',
-      '- If unclear, use "Other"',
-      '',
-      'Text:',
-      text
-    ].join('\n');
-  },
+ CLASSIFY_TEXT_V1: function(text) {
+  return [
+    'You are a text classifier.',
+    '',
+    'Return ONLY valid JSON. No markdown. No code fences. No extra text.',
+    '',
+    'Schema (strict):',
+    '{"category":"Billing|Technical|General|Other","confidence":0.0}',
+    '',
+    'Rules:',
+    '- category MUST be exactly one of: Billing, Technical, General, Other',
+    '- confidence MUST be a number between 0 and 1',
+    '- Output MUST be a single JSON object and nothing else',
+    '',
+    'Text:',
+    text
+  ].join('\\n');
+},
+
 
   RAG_ANSWER_V1: function(question, sources) {
     const src = sources.map(function(s, i){
